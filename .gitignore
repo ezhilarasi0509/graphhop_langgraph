@@ -50,3 +50,9 @@ __pycache__/
 
 # Local results
 results/
+.venv/
+__pycache__/
+.env
+*.pyc
+.DS_Store
+results/progress.jsonl

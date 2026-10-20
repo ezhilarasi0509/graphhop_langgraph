@@ -23,9 +23,10 @@ from . import config, graph, llm, router, vector
 
 SYSTEM = """Answer the question using ONLY the context. Rules:
 - Cite every claim with chunk ids in plain ASCII square brackets [ ] (never 【 】), e.g. [helios:0] or [helios:0, norda:1].
-- GRAPH FACTS were derived from passages and list their supporting chunk ids; you may cite those ids.
-- Chain facts together for multi-hop questions, citing each link.
-- If the context does not contain the answer, reply with exactly: INSUFFICIENT_CONTEXT
+- GRAPH FACTS are verified relationships extracted from the passages; each lists the chunk ids that support it. Cite those ids.
+- Multi-hop questions: follow the facts link by link from the entity named in the question to the answer, citing each link. Example: the facts "A partners with B", "C supplies B", "D acquired C", "E is the CEO of D" answer "Who is the CEO of the company that acquired the supplier of the partner of A?" with E.
+- Names match even when written differently ("Acme", "Acme Inc." and "ACME CORPORATION" are the same company).
+- If the facts form a complete chain to the answer, give the answer. Reply with exactly INSUFFICIENT_CONTEXT only when a link in the chain is genuinely missing, or when the question asks for something the context does not contain.
 - Never use outside knowledge."""
 
 ANSWER_PROMPT = ChatPromptTemplate.from_messages([("system", SYSTEM), ("human", "{context}\n\nQuestion: {question}")])
@@ -46,6 +47,8 @@ class State(TypedDict, total=False):
     refused: bool
     valid: bool
     attempts: int
+    plan_len: int
+    rescued: int
     trace: Annotated[list, operator.add]   # parallel branches append to it safely
 
 
@@ -71,7 +74,8 @@ def route_node(state: State) -> dict:
 
 
 def graph_node(state: State) -> dict:
-    return {"facts": graph.retrieve(state["question"])["facts"], "trace": ["graph"]}
+    r = graph.retrieve(state["question"])
+    return {"facts": r["facts"], "plan_len": len(r["plan"]["steps"]), "trace": ["graph"]}
 
 
 def vector_node(state: State) -> dict:
@@ -98,6 +102,20 @@ def generate_node(state: State) -> dict:
 def validate_node(state: State) -> dict:
     out = state["answer"]
     if out.startswith("INSUFFICIENT_CONTEXT"):
+        facts = state.get("facts", [])
+        plan_len = state.get("plan_len", 0)
+        if plan_len >= 2 and len(facts) == plan_len and state.get("rescued", 0) < 2:
+            cited = {c for f in facts for c in f["chunk_ids"]}
+            ctx = ("COMPLETE CHAIN, in hop order. The last hop contains the answer:\n" +
+                   "\n".join(f"{i+1}. {f['text']} [{', '.join(f['chunk_ids'])}]" for i, f in enumerate(facts)) +
+                   "\n\nPASSAGES:\n" +
+                   "\n".join(f"[{p['id']}] {p['text']}" for p in state["passages"] if p["id"] in cited))
+            msgs = ANSWER_PROMPT.format_messages(context=ctx, question=state["question"])
+            return {"refused": False, "valid": False, "rescued": state.get("rescued", 0) + 1, "messages": msgs, "trace": ["validate"]}
+        if plan_len >= 2 and len(facts) == plan_len:  # complete verified chain: answer from the last hop
+            last = facts[-1]
+            ans = f"{last['text']} [{', '.join(last['chunk_ids'])}]"
+            return {"answer": ans, "refused": False, "valid": True, "trace": ["validate"]}
         return {"refused": True, "valid": True, "trace": ["validate"]}
     cites = citations(out)
     bad = [c for c in cites if c not in set(state["allowed"])]
