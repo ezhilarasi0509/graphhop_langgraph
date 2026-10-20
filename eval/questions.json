@@ -1,0 +1,79 @@
+[
+  {
+    "id": "q1",
+    "question": "Who is the CEO of Norda Semiconductor?",
+    "hops": 1,
+    "keywords": [
+      "Ingrid Solberg"
+    ]
+  },
+  {
+    "id": "q2",
+    "question": "Where is Voltaic Labs headquartered?",
+    "hops": 1,
+    "keywords": [
+      "Boston"
+    ]
+  },
+  {
+    "id": "q3",
+    "question": "Who founded the company that Helios Energy acquired?",
+    "hops": 2,
+    "keywords": [
+      "Raj Patel"
+    ]
+  },
+  {
+    "id": "q4",
+    "question": "Which company supplies chips to the company Helios Energy acquired?",
+    "hops": 2,
+    "keywords": [
+      "Norda"
+    ]
+  },
+  {
+    "id": "q5",
+    "question": "Who is the CEO of the supplier of the company that Helios Energy acquired?",
+    "hops": 3,
+    "keywords": [
+      "Ingrid Solberg"
+    ]
+  },
+  {
+    "id": "q6",
+    "question": "In which city is the supplier of the company that Helios Energy acquired headquartered?",
+    "hops": 3,
+    "keywords": [
+      "Oslo"
+    ]
+  },
+  {
+    "id": "q7",
+    "question": "Which partner of Helios Energy buys chips from the same supplier as Voltaic Labs?",
+    "hops": 3,
+    "keywords": [
+      "Quanta"
+    ]
+  },
+  {
+    "id": "q8",
+    "question": "Which companies does Norda Semiconductor supply?",
+    "hops": "agg",
+    "keywords": [
+      "Voltaic",
+      "Quanta"
+    ]
+  },
+  {
+    "id": "q9",
+    "question": "What was Helios Energy's revenue in 2023?",
+    "hops": "oos",
+    "keywords": []
+  },
+  {
+    "id": "q10",
+    "question": "Who is the CEO of Zeta Chips?",
+    "hops": "oos",
+    "keywords": []
+  }
+]

@@ -1,0 +1,447 @@
+[
+  {
+    "id": "s1",
+    "question": "Who is the CEO of Willow Meadow?",
+    "hops": 1,
+    "keywords": [
+      "Hana Brandt"
+    ]
+  },
+  {
+    "id": "s2",
+    "question": "Who is the CEO of Silent Meadow?",
+    "hops": 1,
+    "keywords": [
+      "Clara Silva"
+    ]
+  },
+  {
+    "id": "s3",
+    "question": "Who is the CEO of Copper Canyon?",
+    "hops": 1,
+    "keywords": [
+      "Amir Tanaka"
+    ]
+  },
+  {
+    "id": "s4",
+    "question": "Who is the CEO of Northern Falcon?",
+    "hops": 1,
+    "keywords": [
+      "Omar Bauer"
+    ]
+  },
+  {
+    "id": "s5",
+    "question": "Who is the CEO of Cobalt Ridge?",
+    "hops": 1,
+    "keywords": [
+      "Kofi Moreau"
+    ]
+  },
+  {
+    "id": "s6",
+    "question": "Where is Summit Canyon headquartered?",
+    "hops": 1,
+    "keywords": [
+      "Osaka"
+    ]
+  },
+  {
+    "id": "s7",
+    "question": "Where is Willow Beacon headquartered?",
+    "hops": 1,
+    "keywords": [
+      "Perth"
+    ]
+  },
+  {
+    "id": "s8",
+    "question": "Where is Silent Beacon headquartered?",
+    "hops": 1,
+    "keywords": [
+      "Denver"
+    ]
+  },
+  {
+    "id": "s9",
+    "question": "Where is Copper Lantern headquartered?",
+    "hops": 1,
+    "keywords": [
+      "Lagos"
+    ]
+  },
+  {
+    "id": "s10",
+    "question": "Where is Northern Ridge headquartered?",
+    "hops": 1,
+    "keywords": [
+      "Lagos"
+    ]
+  },
+  {
+    "id": "s11",
+    "question": "In which city is the supplier of Silent Forge headquartered?",
+    "hops": 2,
+    "keywords": [
+      "Lisbon"
+    ]
+  },
+  {
+    "id": "s12",
+    "question": "Who is the CEO of the company that supplies Willow Beacon?",
+    "hops": 2,
+    "keywords": [
+      "Amir Tanaka"
+    ]
+  },
+  {
+    "id": "s13",
+    "question": "In which city is the supplier of Cobalt Beacon headquartered?",
+    "hops": 2,
+    "keywords": [
+      "Lisbon"
+    ]
+  },
+  {
+    "id": "s14",
+    "question": "Who is the CEO of the company that supplies Copper Quarry?",
+    "hops": 2,
+    "keywords": [
+      "Felix Hansen"
+    ]
+  },
+  {
+    "id": "s15",
+    "question": "In which city is the supplier of Silent Falcon headquartered?",
+    "hops": 2,
+    "keywords": [
+      "Quito"
+    ]
+  },
+  {
+    "id": "s16",
+    "question": "Who is the CEO of the company that supplies Northern Delta?",
+    "hops": 2,
+    "keywords": [
+      "Omar Mensah"
+    ]
+  },
+  {
+    "id": "s17",
+    "question": "In which city is the supplier of Willow Quarry headquartered?",
+    "hops": 2,
+    "keywords": [
+      "Turin"
+    ]
+  },
+  {
+    "id": "s18",
+    "question": "Who is the CEO of the company that supplies Silent Beacon?",
+    "hops": 2,
+    "keywords": [
+      "Elena Bauer"
+    ]
+  },
+  {
+    "id": "s19",
+    "question": "In which city is the supplier of Lunar Falcon headquartered?",
+    "hops": 2,
+    "keywords": [
+      "Austin"
+    ]
+  },
+  {
+    "id": "s20",
+    "question": "Who is the CEO of the company that supplies Iron Beacon?",
+    "hops": 2,
+    "keywords": [
+      "Amir Tanaka"
+    ]
+  },
+  {
+    "id": "s21",
+    "question": "In which city is the supplier of Copper Lantern headquartered?",
+    "hops": 2,
+    "keywords": [
+      "Leeds"
+    ]
+  },
+  {
+    "id": "s22",
+    "question": "Who is the CEO of the company that supplies Granite Meadow?",
+    "hops": 2,
+    "keywords": [
+      "Clara Mensah"
+    ]
+  },
+  {
+    "id": "s23",
+    "question": "Who is the CEO of the company that acquired the supplier of Lunar Delta?",
+    "hops": 3,
+    "keywords": [
+      "Clara Castillo"
+    ]
+  },
+  {
+    "id": "s24",
+    "question": "In which city is the company that acquired the supplier of Crimson Bridge headquartered?",
+    "hops": 3,
+    "keywords": [
+      "Lisbon"
+    ]
+  },
+  {
+    "id": "s25",
+    "question": "Who is the CEO of the company that acquired the supplier of Copper Beacon?",
+    "hops": 3,
+    "keywords": [
+      "Lars Silva"
+    ]
+  },
+  {
+    "id": "s26",
+    "question": "In which city is the company that acquired the supplier of Copper Lantern headquartered?",
+    "hops": 3,
+    "keywords": [
+      "Perth"
+    ]
+  },
+  {
+    "id": "s27",
+    "question": "Who is the CEO of the company that acquired the supplier of Willow Quarry?",
+    "hops": 3,
+    "keywords": [
+      "Lena Adeyemi"
+    ]
+  },
+  {
+    "id": "s28",
+    "question": "In which city is the company that acquired the supplier of Northern Meadow headquartered?",
+    "hops": 3,
+    "keywords": [
+      "Denver"
+    ]
+  },
+  {
+    "id": "s29",
+    "question": "Who is the CEO of the company that acquired the supplier of Amber Harbor?",
+    "hops": 3,
+    "keywords": [
+      "Clara Castillo"
+    ]
+  },
+  {
+    "id": "s30",
+    "question": "In which city is the company that acquired the supplier of Silent Quarry headquartered?",
+    "hops": 3,
+    "keywords": [
+      "Perth"
+    ]
+  },
+  {
+    "id": "s31",
+    "question": "Who is the CEO of the company that acquired the supplier of Crimson Ridge?",
+    "hops": 3,
+    "keywords": [
+      "Clara Varga"
+    ]
+  },
+  {
+    "id": "s32",
+    "question": "In which city is the company that acquired the supplier of Cobalt Ridge headquartered?",
+    "hops": 3,
+    "keywords": [
+      "Tulsa"
+    ]
+  },
+  {
+    "id": "s33",
+    "question": "Who is the CEO of the company that acquired the supplier of Iron Beacon?",
+    "hops": 3,
+    "keywords": [
+      "Omar Bauer"
+    ]
+  },
+  {
+    "id": "s34",
+    "question": "In which city is the company that acquired the supplier of Lunar Bridge headquartered?",
+    "hops": 3,
+    "keywords": [
+      "Quito"
+    ]
+  },
+  {
+    "id": "s35",
+    "question": "Who is the CEO of the company that acquired the supplier of the partner of Amber Harbor?",
+    "hops": 4,
+    "keywords": [
+      "Clara Castillo"
+    ]
+  },
+  {
+    "id": "s36",
+    "question": "Who is the CEO of the company that acquired the supplier of the partner of Lunar Falcon?",
+    "hops": 4,
+    "keywords": [
+      "Lars Silva"
+    ]
+  },
+  {
+    "id": "s37",
+    "question": "Who is the CEO of the company that acquired the supplier of the partner of Willow Meadow?",
+    "hops": 4,
+    "keywords": [
+      "Omar Bauer"
+    ]
+  },
+  {
+    "id": "s38",
+    "question": "Who is the CEO of the company that acquired the supplier of the partner of Summit Forge?",
+    "hops": 4,
+    "keywords": [
+      "Jonas Varga"
+    ]
+  },
+  {
+    "id": "s39",
+    "question": "Who is the CEO of the company that acquired the supplier of the partner of Copper Canyon?",
+    "hops": 4,
+    "keywords": [
+      "Clara Castillo"
+    ]
+  },
+  {
+    "id": "s40",
+    "question": "Who is the CEO of the company that acquired the supplier of the partner of Iron Bridge?",
+    "hops": 4,
+    "keywords": [
+      "Omar Bauer"
+    ]
+  },
+  {
+    "id": "s41",
+    "question": "Who is the CEO of the company that acquired the supplier of the partner of Silent Meadow?",
+    "hops": 4,
+    "keywords": [
+      "Yuki Brandt"
+    ]
+  },
+  {
+    "id": "s42",
+    "question": "Who is the CEO of the company that acquired the supplier of the partner of Willow Beacon?",
+    "hops": 4,
+    "keywords": [
+      "Omar Bauer"
+    ]
+  },
+  {
+    "id": "s43",
+    "question": "Who is the CEO of the company that acquired the supplier of the partner of Northern Ridge?",
+    "hops": 4,
+    "keywords": [
+      "Tomas Okafor"
+    ]
+  },
+  {
+    "id": "s44",
+    "question": "Who is the CEO of the company that acquired the supplier of the partner of Cobalt Ridge?",
+    "hops": 4,
+    "keywords": [
+      "Omar Bauer"
+    ]
+  },
+  {
+    "id": "s45",
+    "question": "Which companies does Copper Canyon supply?",
+    "hops": "agg",
+    "keywords": [
+      "Iron Beacon",
+      "Cobalt Beacon",
+      "Willow Beacon"
+    ]
+  },
+  {
+    "id": "s46",
+    "question": "Which companies does Crimson Ridge supply?",
+    "hops": "agg",
+    "keywords": [
+      "Granite Meadow",
+      "Amber Harbor",
+      "Velvet Canyon"
+    ]
+  },
+  {
+    "id": "s47",
+    "question": "Which companies does Lunar Forge supply?",
+    "hops": "agg",
+    "keywords": [
+      "Silent Quarry",
+      "Copper Canyon",
+      "Copper Beacon"
+    ]
+  },
+  {
+    "id": "s48",
+    "question": "Which companies does Granite Meadow supply?",
+    "hops": "agg",
+    "keywords": [
+      "Silent Meadow",
+      "Iron Bridge"
+    ]
+  },
+  {
+    "id": "s49",
+    "question": "Which companies does Velvet Canyon supply?",
+    "hops": "agg",
+    "keywords": [
+      "Silent Harbor",
+      "Lunar Delta"
+    ]
+  },
+  {
+    "id": "s50",
+    "question": "Which companies does Silent Quarry supply?",
+    "hops": "agg",
+    "keywords": [
+      "Silent Forge",
+      "Lunar Bridge"
+    ]
+  },
+  {
+    "id": "s51",
+    "question": "What was the 2023 revenue of Copper Bridge?",
+    "hops": "oos",
+    "keywords": []
+  },
+  {
+    "id": "s52",
+    "question": "What was the 2023 revenue of Summit Delta?",
+    "hops": "oos",
+    "keywords": []
+  },
+  {
+    "id": "s53",
+    "question": "What was the 2023 revenue of Cobalt Lantern?",
+    "hops": "oos",
+    "keywords": []
+  },
+  {
+    "id": "s54",
+    "question": "What was the 2023 revenue of Silent Forge?",
+    "hops": "oos",
+    "keywords": []
+  },
+  {
+    "id": "s55",
+    "question": "What was the 2023 revenue of Crimson Ridge?",
+    "hops": "oos",
+    "keywords": []
+  },
+  {
+    "id": "s56",
+    "question": "What was the 2023 revenue of Crimson Bridge?",
+    "hops": "oos",
+    "keywords": []
+  }
+]

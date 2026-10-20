@@ -1,0 +1,22 @@
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	route(route)
+	graph(graph)
+	vector(vector)
+	merge(merge)
+	generate(generate)
+	validate(validate)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> route;
+	generate --> validate;
+	graph -.-> merge;
+	graph -.-> vector;
+	merge --> generate;
+	route -.-> graph;
+	route -.-> vector;
+	validate -.-> __end__;
+	validate -.-> generate;
+	vector --> merge;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc

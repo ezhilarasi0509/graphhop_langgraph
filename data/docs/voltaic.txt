@@ -1,0 +1,2 @@
+Voltaic Labs: Company Profile
+Voltaic Labs was founded by Raj Patel and is headquartered in Boston. Voltaic develops the Prism battery controller, a product that manages charging cycles for grid storage. The Prism controller uses SiliconCore chips for real time monitoring. Voltaic Labs was acquired by Helios Energy in 2021.
