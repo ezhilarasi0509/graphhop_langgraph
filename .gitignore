@@ -56,3 +56,8 @@ __pycache__/
 *.pyc
 .DS_Store
 results/progress.jsonl
+.env
+.venv/
+__pycache__/
+*.pyc
+.cache/
