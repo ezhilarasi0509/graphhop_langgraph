@@ -7,6 +7,20 @@ same documents, links it to the vector index through shared chunk ids, and route
 retrieval path. The answer pipeline is a LangGraph state machine, and every answer carries citations that are
 validated against what was actually retrieved.
 
+## In plain words
+
+- **Chunk:** a short passage cut from a document. Every chunk has an id such as `co04:0`.
+- **Vector search:** each chunk is turned into a list of numbers (an embedding) so that passages with similar
+  meaning sit close together. Search finds the passages most *similar to the question*.
+- **Knowledge graph:** facts stored as connections between things, for example
+  `(Silent Quarry) -[ACQUIRED]-> (Northern Ridge)`. You can follow connections from one fact to the next.
+- **Multi-hop question:** a question whose answer needs a chain of facts, each one from a different document.
+- **Entity resolution:** "Silent Harbor", "SILENT HARBOR" and "Silent Harbor Corporation" are the same company,
+  so they must become one node, or the chain breaks.
+- **Router:** decides whether a question is better answered from the graph, from vector search, or both.
+- **Citation validation:** every answer must cite chunk ids, and each cited id must be a passage that was
+  actually retrieved. Otherwise the answer is rejected and regenerated.
+
 ## Results
 
 Synthetic benchmark: 40 generated company documents, 56 questions with known answers, grouped by hop count
@@ -72,6 +86,37 @@ justified it.
 A multi-hop question such as "Who is the CEO of the company that acquired the supplier of the partner of Amber
 Harbor?" needs facts from four different documents, but the question only names Amber Harbor. The later documents
 are not similar to the question, so similarity search never retrieves them and the answer cannot be assembled.
+
+## Worked example: one question, end to end
+
+Question: **"Who is the CEO of the company that acquired the supplier of the partner of Amber Harbor?"**
+(four documents are needed; the question names only the first company)
+
+1. **Route.** A small model sees a question about relationships between companies and picks the `graph` path.
+2. **Plan.** The planner turns the question into hops, starting from Amber Harbor:
+   `any:PARTNERS_WITH`, `in:SUPPLIES`, `in:ACQUIRED`, `in:CEO_OF`. "in" means the arrow points *into* the current
+   company (the supplier of X is whoever SUPPLIES X). The question's company is linked to the node
+   `Company:amber_harbor`, and the hops become a fixed, whitelisted query pattern. The model never writes Cypher:
+
+       (a:Entity {id:$a})-[:PARTNERS_WITH]-()<-[:SUPPLIES]-()<-[:ACQUIRED]-()<-[:CEO_OF]-()
+
+3. **Retrieve.** Neo4j follows the pattern and returns four facts, one per hop:
+   - Amber Harbor Corporation partners with Granite Ridge Corporation.
+   - Northern Ridge Corporation supplies Granite Ridge Corporation.
+   - Silent Quarry Corporation acquired Northern Ridge Corporation.
+   - Clara Castillo is the CEO of Silent Quarry Corporation.
+4. **Merge.** The facts are labelled with the chunk ids they came from, and the text of those chunks is fetched
+   so every citation can point to a real passage.
+5. **Generate.** The model answers `Clara Castillo [co04:0]`.
+6. **Validate.** `co04:0` is a retrieved chunk, so the answer is accepted. (A made-up id would be rejected and
+   the model asked again.)
+
+**Vector-only on the same question** replied `INSUFFICIENT_CONTEXT`: it searches for passages similar to the
+question, and the passages holding the later hops do not look like it. In the retrieval diagnostic the answer
+appears in vector search's top 5 for 0% of the 4-hop questions.
+
+**A question the documents cannot answer** ("What was the 2023 revenue of Copper Bridge?") is routed to vector
+search, the model finds nothing relevant and replies `INSUFFICIENT_CONTEXT` in both systems. It does not invent a figure.
 
 ## How it works
 
