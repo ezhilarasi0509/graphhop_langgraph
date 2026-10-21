@@ -1,63 +1,13 @@
-.venv/
 .env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
 .cache/
 logs/
-__pycache__/
 .DS_Store
 results/progress*.jsonl
 results/full_run*.log
-
-# Secrets
-.env
-.env.*
-!.env.example
-
-# Python
-.venv/
-venv/
-__pycache__/
-*.pyc
-.pytest_cache/
-
-# Cache
-.cache/
-*.log
-
-# macOS
-.DS_Store
-
-# Local results
-results/
-
-# Secrets
-.env
-.env.*
-!.env.example
-
-# Python
-.venv/
-venv/
-__pycache__/
-*.pyc
-.pytest_cache/
-
-# Cache
-.cache/
-*.log
-
-# macOS
-.DS_Store
-
-# Local results
-results/
-.venv/
-__pycache__/
-.env
-*.pyc
-.DS_Store
-results/progress.jsonl
-.env
-.venv/
-__pycache__/
-*.pyc
-.cache/

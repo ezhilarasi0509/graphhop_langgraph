@@ -14,7 +14,7 @@ def ask(question: str, mode: str = "auto") -> dict:
               "citation_retries": s["attempts"] - 1, "route": s["route"], "router_confidence": s["confidence"],
               "graph_facts": [f["text"] for f in s.get("facts", [])],
               "citations": [{"id": p["id"], "text": p["text"]} for p in s.get("passages", []) if p["id"] in used],
-              "trace": s["trace"],
+              "trace": s["trace"], "rescued": s.get("rescued", 0), "chain_fallback": s.get("chain_fallback", False),
               "latency_ms": round((time.perf_counter() - t0 - llm.WAITED[0]) * 1000),
               "llm_calls": llm.USAGE["calls"] - calls0, "tokens": llm.USAGE["tokens"] - tokens0}
     router.log_decision(question=question, mode=mode, route=s["route"], confidence=s["confidence"],

@@ -37,13 +37,15 @@ def run(mode, questions, sleep, progress) -> list[dict]:
             continue
         res = answer.ask(q["question"], mode)
         row = {"hops": str(q["hops"]), "ok": correct(q, res), "ms": res["latency_ms"], "route": res["route"],
-               "tokens": res["tokens"], "calls": res["llm_calls"]}
+               "tokens": res["tokens"], "calls": res["llm_calls"], "rescued": res["rescued"],
+               "fallback": res["chain_fallback"]}
         rows.append(row)
         progress[key] = row
         with open(PROGRESS_FILE, "a") as f:
             f.write(json.dumps({"key": key, **row}) + "\n")
         print(f"[{mode}] {q['id']} hops={q['hops']} ok={row['ok']} route={row['route']} "
-              f"{row['ms']}ms {row['tokens']} tokens {row['calls']} calls")
+              f"{row['ms']}ms {row['tokens']} tokens {row['calls']} calls"
+              + (f" rescued={row['rescued']}" if row["rescued"] else "") + (" FALLBACK" if row["fallback"] else ""))
         if not row["ok"]:
             print("   FAILED ->", res["answer"][:200].replace("\n", " "), "| facts:", len(res["graph_facts"]),
                   "| expected:", q["keywords"])
@@ -53,8 +55,8 @@ def run(mode, questions, sleep, progress) -> list[dict]:
 
 def build_table(systems: dict) -> str:
     head = ("| System | " + " | ".join(f"{g}-hop" if g.isdigit() else g for g in GROUPS) +
-            " | Overall | p50 ms | p95 ms | tokens/query | LLM calls/query |")
-    lines = [head, "|---" * (len(GROUPS) + 6) + "|"]
+            " | Overall | p50 ms | p95 ms | tokens/query | LLM calls/query | rescued / fallback |")
+    lines = [head, "|---" * (len(GROUPS) + 7) + "|"]
     for name, rows in systems.items():
         by = defaultdict(list)
         for r in rows:
@@ -64,8 +66,9 @@ def build_table(systems: dict) -> str:
         have = all(r.get("tokens") is not None for r in rows)   # averages only when every row has the data
         tok = f"{np.mean([r['tokens'] for r in rows]):,.0f}" if have else "-"
         calls = f"{np.mean([r['calls'] for r in rows]):.1f}" if have else "-"
+        resc = sum(1 for r in rows if r.get("rescued")) ; fb = sum(1 for r in rows if r.get("fallback"))
         lines.append(f"| {name} | " + " | ".join(cells) + f" | {100 * np.mean([r['ok'] for r in rows]):.0f}% | "
-                     f"{np.percentile(ms, 50):.0f} | {np.percentile(ms, 95):.0f} | {tok} | {calls} |")
+                     f"{np.percentile(ms, 50):.0f} | {np.percentile(ms, 95):.0f} | {tok} | {calls} | {resc} / {fb} |")
     return "\n".join(lines)
 
 

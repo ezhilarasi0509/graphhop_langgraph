@@ -1,15 +1,18 @@
 """The answer pipeline as a LangGraph state machine.
 
     START -> route -> graph ----+
-                  \\-> vector ---+--> merge -> generate -> validate --(citations invalid)--> generate (retry, max 3)
-                                                              \\--(valid or refused)--> END
+                  \\-> vector ---+--> merge -> generate -> validate --(retry)--> generate   (max 3 attempts)
+                                                              \\--(done)--> END
 
 - route:    small model picks graph | vector | both (low confidence => both, run IN PARALLEL)
 - graph:    template-based Cypher retrieval (the model never writes Cypher)
 - vector:   pgvector HNSW search; also used as a fallback when the graph returns fewer than 3 facts
 - merge:    label graph facts and passages, make every cited chunk id resolvable to real text
 - generate: LangChain prompt -> ChatOpenAI answer with chunk-id citations
-- validate: every citation must be a retrieved chunk id; otherwise feed the error back and regenerate
+- validate: (1) every citation must be a retrieved chunk id, otherwise feed the error back and regenerate;
+            (2) CHAIN RESCUE: if the model refuses although the graph returned a COMPLETE chain (one fact per
+                planned hop), re-ask with only the numbered chain, up to 2 times;
+            (3) if it still refuses, answer from the chain's last fact and flag `chain_fallback`.
 Each node returns a partial state update; `trace` records which nodes ran."""
 import operator
 import re
@@ -31,6 +34,7 @@ SYSTEM = """Answer the question using ONLY the context. Rules:
 
 ANSWER_PROMPT = ChatPromptTemplate.from_messages([("system", SYSTEM), ("human", "{context}\n\nQuestion: {question}")])
 MAX_ATTEMPTS = 3
+MAX_RESCUES = 2
 MIN_GRAPH_FACTS = 3
 
 
@@ -40,6 +44,7 @@ class State(TypedDict, total=False):
     route: str
     confidence: float
     facts: list[dict]
+    plan_len: int                 # number of hops the graph planner chose
     passages: list[dict]
     allowed: list[str]
     messages: list
@@ -47,8 +52,8 @@ class State(TypedDict, total=False):
     refused: bool
     valid: bool
     attempts: int
-    plan_len: int
-    rescued: int
+    rescued: int                  # how many times the chain rescue re-asked
+    chain_fallback: bool          # answer was taken from the chain's last fact, not written by the model
     trace: Annotated[list, operator.add]   # parallel branches append to it safely
 
 
@@ -66,6 +71,21 @@ def clean(text: str) -> str:
     return text
 
 
+def complete_chain(state: State) -> bool:
+    """True when the graph returned exactly one fact per planned hop (a chain of 2+ hops)."""
+    n = state.get("plan_len", 0)
+    return n >= 2 and len(state.get("facts", [])) == n
+
+
+def _chain_context(state: State) -> str:
+    facts = state["facts"]
+    cited = {c for f in facts for c in f["chunk_ids"]}
+    return ("COMPLETE CHAIN, in hop order. The last hop contains the answer:\n" +
+            "\n".join(f"{i + 1}. {f['text']} [{', '.join(f['chunk_ids'])}]" for i, f in enumerate(facts)) +
+            "\n\nPASSAGES:\n" +
+            "\n".join(f"[{p['id']}] {p['text']}" for p in state.get("passages", []) if p["id"] in cited))
+
+
 # ---- nodes ---------------------------------------------------------------------------------------------------
 def route_node(state: State) -> dict:
     mode = state.get("mode", "auto")
@@ -75,7 +95,8 @@ def route_node(state: State) -> dict:
 
 def graph_node(state: State) -> dict:
     r = graph.retrieve(state["question"])
-    return {"facts": r["facts"], "plan_len": len(r["plan"]["steps"]), "trace": ["graph"]}
+    steps = (r.get("plan") or {}).get("steps") or []
+    return {"facts": r["facts"], "plan_len": len(steps), "trace": ["graph"]}
 
 
 def vector_node(state: State) -> dict:
@@ -102,21 +123,16 @@ def generate_node(state: State) -> dict:
 def validate_node(state: State) -> dict:
     out = state["answer"]
     if out.startswith("INSUFFICIENT_CONTEXT"):
-        facts = state.get("facts", [])
-        plan_len = state.get("plan_len", 0)
-        if plan_len >= 2 and len(facts) == plan_len and state.get("rescued", 0) < 2:
-            cited = {c for f in facts for c in f["chunk_ids"]}
-            ctx = ("COMPLETE CHAIN, in hop order. The last hop contains the answer:\n" +
-                   "\n".join(f"{i+1}. {f['text']} [{', '.join(f['chunk_ids'])}]" for i, f in enumerate(facts)) +
-                   "\n\nPASSAGES:\n" +
-                   "\n".join(f"[{p['id']}] {p['text']}" for p in state["passages"] if p["id"] in cited))
-            msgs = ANSWER_PROMPT.format_messages(context=ctx, question=state["question"])
-            return {"refused": False, "valid": False, "rescued": state.get("rescued", 0) + 1, "messages": msgs, "trace": ["validate"]}
-        if plan_len >= 2 and len(facts) == plan_len:  # complete verified chain: answer from the last hop
-            last = facts[-1]
-            ans = f"{last['text']} [{', '.join(last['chunk_ids'])}]"
-            return {"answer": ans, "refused": False, "valid": True, "trace": ["validate"]}
-        return {"refused": True, "valid": True, "trace": ["validate"]}
+        if not complete_chain(state):
+            return {"refused": True, "valid": True, "trace": ["validate"]}          # genuine refusal
+        rescued = state.get("rescued", 0)
+        if rescued < MAX_RESCUES and state["attempts"] < MAX_ATTEMPTS:               # re-ask with only the chain
+            msgs = ANSWER_PROMPT.format_messages(context=_chain_context(state), question=state["question"])
+            return {"refused": False, "valid": False, "rescued": rescued + 1, "messages": msgs,
+                    "trace": ["validate"]}
+        last = state["facts"][-1]                                                    # still refusing: use the chain
+        return {"answer": f"{last['text']} [{', '.join(last['chunk_ids'])}]", "refused": False, "valid": True,
+                "chain_fallback": True, "trace": ["validate"]}
     cites = citations(out)
     bad = [c for c in cites if c not in set(state["allowed"])]
     if cites and not bad:
