@@ -1,20 +1,20 @@
 graph TD;
-	__start__([<p>__start__</p>]):::first
+	start_node([start]):::first
 	route(route)
-	graph(graph)
+	graph_search(graph)
 	vector(vector)
 	merge(merge)
 	generate(generate)
 	validate(validate)
-	__end__([<p>__end__</p>]):::last
-	__start__ --> route;
+	end_node([end]):::last
+	start_node --> route;
 	generate --> validate;
-	graph -.-> merge;
-	graph -.-> vector;
+	graph_search -.-> merge;
+	graph_search -.-> vector;
 	merge --> generate;
-	route -.-> graph;
+	route -.-> graph_search;
 	route -.-> vector;
-	validate -.-> __end__;
+	validate -.-> end_node;
 	validate -.-> generate;
 	vector --> merge;
 	classDef default fill:#f2f0ff,line-height:1.2

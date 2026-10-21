@@ -53,22 +53,22 @@ The answer pipeline, exported from the compiled LangGraph (`docs/pipeline.mmd`, 
 
 ```mermaid
 graph TD;
-	__start__([<p>__start__</p>]):::first
+	start_node([start]):::first
 	route(route)
-	graph(graph)
+	graph_search(graph)
 	vector(vector)
 	merge(merge)
 	generate(generate)
 	validate(validate)
-	__end__([<p>__end__</p>]):::last
-	__start__ --> route;
+	end_node([end]):::last
+	start_node --> route;
 	generate --> validate;
-	graph -.-> merge;
-	graph -.-> vector;
+	graph_search -.-> merge;
+	graph_search -.-> vector;
 	merge --> generate;
-	route -.-> graph;
+	route -.-> graph_search;
 	route -.-> vector;
-	validate -.-> __end__;
+	validate -.-> end_node;
 	validate -.-> generate;
 	vector --> merge;
 	classDef default fill:#f2f0ff,line-height:1.2
@@ -179,10 +179,10 @@ search, the model finds nothing relevant and replies `INSUFFICIENT_CONTEXT` in b
 
 ## Repository layout
 
-    app/        schema, chunking, extract, resolve, ingest, vector, graph, router, llm (LangChain), pipeline (LangGraph), answer, api
+    app/        schema, chunking, extract, resolve, ingest, vector, graph, router, llm (LangChain), pipeline (LangGraph), diagram, answer, api
     scripts/    gen_synthetic.py, update_readme.py, export_diagram.py
     eval/       run_eval.py (benchmark), vector_recall.py (retrieval diagnostic), question sets
-    tests/      21 tests: fake-LLM-server client tests, helper tests, LangGraph control-flow and chain-rescue tests
+    tests/      23 tests: fake-LLM-server client tests, helper tests, LangGraph control-flow and chain-rescue tests
     data/       sample documents (docs/) and the generated synthetic corpus (synthetic/)
     docs/       HOW_IT_WORKS.md (internals walkthrough), pipeline.mmd (exported diagram)
 
@@ -192,7 +192,7 @@ search, the model finds nothing relevant and replies `INSUFFICIENT_CONTEXT` in b
     pip install -r requirements.txt -r requirements-dev.txt
     cp .env.example .env          # add a free Groq API key
     docker compose up -d          # Neo4j and Postgres/pgvector
-    python -m pytest -q           # 21 tests, no API key or database needed
+    python -m pytest -q           # 23 tests, no API key or database needed
     python scripts/gen_synthetic.py
     DATA_DIR=data/synthetic python -m app.ingest --dry-run   # estimate cost first
     DATA_DIR=data/synthetic python -m app.ingest

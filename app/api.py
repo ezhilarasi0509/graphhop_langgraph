@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel
 from . import answer
-from .pipeline import PIPELINE
+from .diagram import pipeline_mermaid
 
 app = FastAPI(title="GraphHop: Knowledge Graph RAG (LangGraph)")
 
@@ -22,7 +22,7 @@ def ask(req: AskRequest):
 @app.get("/pipeline", response_class=PlainTextResponse)
 def pipeline_diagram():
     """The real pipeline as a Mermaid diagram, generated from the compiled LangGraph."""
-    return PIPELINE.get_graph().draw_mermaid()
+    return pipeline_mermaid()
 
 
 @app.get("/health")
